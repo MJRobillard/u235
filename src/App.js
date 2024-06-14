@@ -1,5 +1,5 @@
 import './App.css';
-import FissionReactionDiagram from './u235V2';
+import FissionReactionDiagram from './u235';
 function App() {
   return (<div>
     <FissionReactionDiagram></FissionReactionDiagram>

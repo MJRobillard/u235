@@ -7,6 +7,6 @@ function App() {
       <FissionReactionDiagram />
     </div>
   );
-} ;
+} ;;
 
 export default App;

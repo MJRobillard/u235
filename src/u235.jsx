@@ -1,81 +1,153 @@
-import React, { useState, useEffect } from 'react';
-import ReactFlow, { removeElements, addEdge, Controls, Background } from 'react-flow-renderer';
+import React, { useState, useCallback } from 'react';
+import ReactFlow, { Controls, Background, MiniMap, useNodesState, useEdgesState } from 'react-flow-renderer';
+
+const initialNodes = [
+  {
+    id: '1',
+    type: 'input',
+    data: { label: 'U-235' },
+    position: { x: 0, y: 0 },
+  },
+  {
+    id: '2',
+    data: { label: 'Ba-139' },
+    position: { x: 0, y: 150 },
+  },
+  {
+    id: '3',
+    data: { label: 'Kr-95' },
+    position: { x: 200, y: 150 },
+  },
+  {
+    id: '4',
+    data: { label: 'La-139' },
+    position: { x: 0, y: 300 },
+  },
+  {
+    id: '5',
+    data: { label: 'Ce-139' },
+    position: { x: 0, y: 450 },
+  },
+  {
+    id: '6',
+    data: { label: 'Pr-139' },
+    position: { x: 0, y: 600 },
+  },
+  {
+    id: '7',
+    data: { label: 'Nd-139' },
+    position: { x: 0, y: 750 },
+  },
+  {
+    id: '8',
+    data: { label: 'Pm-139' },
+    position: { x: 0, y: 900 },
+  },
+  {
+    id: '9',
+    data: { label: 'Sm-139' },
+    position: { x: 0, y: 1050 },
+  },
+  {
+    id: '10',
+    data: { label: 'Eu-139' },
+    position: { x: 0, y: 1200 },
+  },
+  {
+    id: '11',
+    data: { label: 'Gd-139' },
+    position: { x: 0, y: 1350 },
+  },
+  {
+    id: '12',
+    data: { label: 'Y-95' },
+    position: { x: 200, y: 300 },
+  },
+  {
+    id: '13',
+    data: { label: 'Zr-95' },
+    position: { x: 200, y: 450 },
+  },
+  {
+    id: '14',
+    data: { label: 'Nb-95' },
+    position: { x: 200, y: 600 },
+  },
+  {
+    id: '15',
+    data: { label: 'Mo-95' },
+    position: { x: 200, y: 750 },
+  },
+  {
+    id: '16',
+    data: { label: 'Tc-95' },
+    position: { x: 200, y: 900 },
+  },
+  {
+    id: '17',
+    data: { label: 'Ru-95' },
+    position: { x: 200, y: 1050 },
+  },
+  {
+    id: '18',
+    data: { label: 'Rh-95' },
+    position: { x: 200, y: 1200 },
+  },
+  {
+    id: '19',
+    data: { label: 'Pd-95' },
+    position: { x: 200, y: 1350 },
+  },
+];
+
+const initialEdges = [
+  { id: 'e1-2', source: '1', target: '2', label: 'n', type: 'straight' },
+  { id: 'e1-3', source: '1', target: '3', label: 'n', type: 'straight' },
+  { id: 'e2-4', source: '2', target: '4', label: 'β-', type: 'straight' },
+  { id: 'e4-5', source: '4', target: '5', label: 'β-', type: 'straight' },
+  { id: 'e5-6', source: '5', target: '6', label: 'β-', type: 'straight' },
+  { id: 'e6-7', source: '6', target: '7', label: 'β-', type: 'straight' },
+  { id: 'e7-8', source: '7', target: '8', label: 'β-', type: 'straight' },
+  { id: 'e8-9', source: '8', target: '9', label: 'β-', type: 'straight' },
+  { id: 'e9-10', source: '9', target: '10', label: 'β-', type: 'straight' },
+  { id: 'e10-11', source: '10', target: '11', label: 'β-', type: 'straight' },
+  { id: 'e3-12', source: '3', target: '12', label: 'β-', type: 'straight' },
+  { id: 'e12-13', source: '12', target: '13', label: 'β-', type: 'straight' },
+  { id: 'e13-14', source: '13', target: '14', label: 'β-', type: 'straight' },
+  { id: 'e14-15', source: '14', target: '15', label: 'β-', type: 'straight' },
+  { id: 'e15-16', source: '15', target: '16', label: 'β-', type: 'straight' },
+  { id: 'e16-17', source: '16', target: '17', label: 'β-', type: 'straight' },
+  { id: 'e17-18', source: '17', target: '18', label: 'β-', type: 'straight' },
+  { id: 'e18-19', source: '18', target: '19', label: 'β-', type: 'straight' },
+];
 
 const FissionReactionDiagram = () => {
-  const [elements, setElements] = useState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  useEffect(() => {
-    const initialElements = [
-      {
-        id: 'U235',
-        type: 'input',
-        data: { label: 'U235' },
-        position: { x: 0, y: 0 },
-      },
-      {
-        id: 'Xe139',
-        data: { label: 'Xe139 (6.3s)' },
-        position: { x: 200, y: 0 },
-      },
-      {
-        id: 'Cs139',
-        data: { label: 'Cs139 (9.5m)' },
-        position: { x: 400, y: 0 },
-      },
-      {
-        id: 'Ba139',
-        data: { label: 'Ba139 (82.9m)' },
-        position: { x: 600, y: 0 },
-      },
-      {
-        id: 'La139',
-        data: { label: 'La139 (1.7h)' },
-        position: { x: 800, y: 0 },
-      },
-      {
-        id: 'Ce139',
-        data: { label: 'Ce139 (stable)' },
-        position: { x: 1000, y: 0 },
-      },
-      {
-        id: 'e1',
-        source: 'U235',
-        target: 'Xe139',
-        label: 'β-',
-      },
-      {
-        id: 'e2',
-        source: 'Xe139',
-        target: 'Cs139',
-        label: 'β-',
-      },
-      {
-        id: 'e3',
-        source: 'Cs139',
-        target: 'Ba139',
-        label: 'β-',
-      },
-      {
-        id: 'e4',
-        source: 'Ba139',
-        target: 'La139',
-        label: 'β-',
-      },
-      {
-        id: 'e5',
-        source: 'La139',
-        target: 'Ce139',
-        label: 'β-',
-      },
-    ];
-    setElements(initialElements);
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
   }, []);
 
   return (
-    <div style={{ height: 300 }}>
-      <ReactFlow elements={elements} nodesConnectable={false} nodesDraggable={false}>
+    <div style={{ height: 1500, width: 400 }} onDragOver={onDragOver}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeMouseEnter={(event, node) => {
+          console.log('mouse enter:', node);
+        }}
+        onNodeMouseLeave={(event, node) => {
+          console.log('mouse leave:', node);
+        }}
+        nodesDraggable={true}
+      >
+        <Background variant="lines" />
+        <MiniMap />
         <Controls />
-        <Background color="#aaa" gap={16} />
       </ReactFlow>
     </div>
   );
